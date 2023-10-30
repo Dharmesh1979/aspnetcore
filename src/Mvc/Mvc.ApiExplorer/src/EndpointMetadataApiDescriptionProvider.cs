@@ -276,7 +276,7 @@ internal sealed class EndpointMetadataApiDescriptionProvider : IApiDescriptionPr
         {
             return (BindingSource.FormFile, fromFormAttribute.Name ?? parameter.Name ?? string.Empty, false, parameter.ParameterType);
         }
-        else if (parameter.CustomAttributes.Any(a => typeof(IFromServiceMetadata).IsAssignableFrom(a.AttributeType)) ||
+        else if (parameter.CustomAttributes.Any(a => typeof(IFromServiceMetadata).IsAssignableFrom(a.AttributeType) || typeof(FromKeyedServicesAttribute) == a.AttributeType) ||
                  parameter.ParameterType == typeof(HttpContext) ||
                  parameter.ParameterType == typeof(HttpRequest) ||
                  parameter.ParameterType == typeof(HttpResponse) ||
@@ -307,9 +307,9 @@ internal sealed class EndpointMetadataApiDescriptionProvider : IApiDescriptionPr
             return (BindingSource.FormFile, parameter.Name ?? string.Empty, false, parameter.ParameterType);
         }
         else if (disableInferredBody && (
-                 (parameter.ParameterType.IsArray && ParameterBindingMethodCache.HasTryParseMethod(parameter.ParameterType.GetElementType()!)) ||
                  parameter.ParameterType == typeof(string[]) ||
-                 parameter.ParameterType == typeof(StringValues)))
+                 parameter.ParameterType == typeof(StringValues) ||
+                 (parameter.ParameterType.IsArray && ParameterBindingMethodCache.HasTryParseMethod(parameter.ParameterType.GetElementType()!)) ))
         {
             return (BindingSource.Query, parameter.Name ?? string.Empty, false, parameter.ParameterType);
         }

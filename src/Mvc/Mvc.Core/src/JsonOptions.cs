@@ -40,9 +40,9 @@ public class JsonOptions
         MaxDepth = MvcOptions.DefaultMaxModelBindingRecursionDepth,
 
         // The JsonSerializerOptions.GetTypeInfo method is called directly and needs a defined resolver
-        // setting the default resolver (reflection-based) but the user can overwrite it directly or calling
-        // .AddContext<TContext>()
-        TypeInfoResolver = CreateDefaultTypeResolver()
+        // setting the default resolver (reflection-based) but the user can overwrite it directly or by modifying
+        // the TypeInfoResolverChain. Use JsonTypeInfoResolver.Combine() to produce an empty TypeInfoResolver.
+        TypeInfoResolver = JsonSerializer.IsReflectionEnabledByDefault ? CreateDefaultTypeResolver() : JsonTypeInfoResolver.Combine()
     };
 
     private static IJsonTypeInfoResolver CreateDefaultTypeResolver()
